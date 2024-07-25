@@ -11,6 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.39",
     "pinia": "^2.1.7",
     "qs": "^6.12.1",
     "sweetalert2": "^11.11.0",

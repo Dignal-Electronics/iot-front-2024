@@ -4,6 +4,7 @@ import Login from '@/views/Login.vue'
 import Main from '@/components/layout/Main.vue'
 import Users from '@/views/Users/Index.vue'
 import Devices from '@/views/Devices/Index.vue'
+import Charts from '@/views/Devices/Charts.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +32,8 @@ const router = createRouter({
       },
       children: [
         { path: '/usuarios', name: 'users', component: Users },
-        { path: '/dispositivos', name: 'devices', component: Devices }
+        { path: '/dispositivos', name: 'devices', component: Devices },
+        { path: '/dispositivos/:key', name: 'charts', component: Charts }
       ]
     },
 
