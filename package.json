@@ -14,6 +14,7 @@
     "@amcharts/amcharts4": "^4.10.39",
     "pinia": "^2.1.7",
     "qs": "^6.12.1",
+    "socket.io-client": "^4.7.5",
     "sweetalert2": "^11.11.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",

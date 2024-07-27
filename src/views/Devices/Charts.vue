@@ -21,8 +21,13 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4themes_dark from "@amcharts/amcharts4/themes/dark";
 import { onBeforeMount, onMounted, ref } from "vue";
+import { io } from "socket.io-client";
 
 onBeforeMount(() => {
+  socket.connect();
+  socket.emit('prueba');
+
+
   if (undefined !== localStorage.theme && 'darkMode' === localStorage.theme) {
     am4core.useTheme(am4themes_dark);
   } else {
@@ -33,6 +38,12 @@ onBeforeMount(() => {
 onMounted(() => {
   initZoomableChart();
   initCustomChart();
+
+  socket.emit('prueba');
+});
+
+const socket = io(`http://localhost:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
+  autoConnect: false
 });
 
 const zoomableChart = ref(null);
@@ -113,24 +124,3 @@ const initCustomChart = () => {
   height: 320px;
 }
 </style>
-
-
-
-
-
-// operadores de comparación
-
- == 
- 1 == 1 -> true
- 3 == 2 -> false
-
- "1" == 1 -> true
-
-
-// comparación estricta
-"1" === 1 -> false
-1 === 1 -> true
-
-2 !== 5 -> true
-4 !== 4 -> false
-"1" !== 1 -> true
