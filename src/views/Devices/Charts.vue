@@ -22,11 +22,12 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4themes_dark from "@amcharts/amcharts4/themes/dark";
 import { onBeforeMount, onMounted, ref } from "vue";
 import { io } from "socket.io-client";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 onBeforeMount(() => {
   socket.connect();
-  socket.emit('prueba');
-
 
   if (undefined !== localStorage.theme && 'darkMode' === localStorage.theme) {
     am4core.useTheme(am4themes_dark);
@@ -36,10 +37,14 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  socket.emit('inicio', route.params.key);
+
   initZoomableChart();
   initCustomChart();
 
-  socket.emit('prueba');
+  socket.on('dispositivo', (dispositivo) => {
+    console.log('Dispositivo no encontrado');
+  });
 });
 
 const socket = io(`http://localhost:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
@@ -50,10 +55,11 @@ const zoomableChart = ref(null);
 const initZoomableChart = () => {
   let chart = am4core.create(zoomableChart.value, am4charts.XYChart);
 
-  chart.data = [
-    { "fecha": "2024-07-20", "valor": 20 },
-    { "fecha": "2024-07-21", "valor": 35 }
-  ];
+  socket.on('temperatura', ({date, value}) => {
+    console.log('Temperatura: ', value);
+    
+    chart.addData({date: new Date(date), value: value });
+  });
 
   let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.renderer.grid.template.location = 0;
@@ -62,8 +68,8 @@ const initZoomableChart = () => {
   let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
   let series = chart.series.push(new am4charts.LineSeries());
-  series.dataFields.valueY = "valor";
-  series.dataFields.dateX = "fecha";
+  series.dataFields.valueY = "value";
+  series.dataFields.dateX = "date";
   series.strokeWidth = 3;
   series.fillOpacity = 0.5;
 
