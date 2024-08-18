@@ -1,0 +1,55 @@
+1. Entrar a la consola de google
+2. En el panel izquierdo de la consola Ubicar la sección
+    "Compute Engine"
+3. Elegir la opción "Instancias de VM".
+4. Habilitar la api de VM
+5. Crear una instancia de VM y modificamos lo siguiente:
+    - Tipo de maquina: a una de 2GB de memoria (e2-small).
+    - Disco de arranque: Seleccionar "Ubuntu" como sistem operativo.
+    - Firewall: Habilitar la opción "Permitir tráfico HTTP".
+6. Hacer que la IP externa sea estática:
+    - Dar click en el nombre de la instancia.
+    - Seleccionar la opcion "Editar" de la parte superiror.
+    - Interfaces de red
+    - Dirección IPv4 externa
+    - Edita la interfaz de red
+    - Cambia "Efimera" por "Reservar direción ip externa estática"
+    - Asignar un nombre y guardar.
+7. Generar las claves SSH para poder conectarnos a nuestra VM por medio de la consola
+    - Ejecutar el comando:  ssh-keygen -t ECDSA
+    - De preferencia no cambiar el path de guardado de las claves
+    - Luego pedira una "frase" o contraseña para la encriptación en nuestro
+      ejemplo no modificamos nada, solo se presiona la tecla enter.
+    - Abrir la llave publica y agregarla en la instancia, en la sección de claves ssh
+8. Conectarnos a la VM por medio de la consola. Debemos ejecutar el siguiente comando:
+    -  ssh jclandero@35.222.53.85 -i "/home/jclandero/.ssh/id_ec
+    - Usando el comando ssh, y con los respectivos datos: ssh usuario@ip_externa "path de la llave privada (Sin el *.pub)" 
+9. Actualizar la lista de paquete de Ubuntu, ejecuntando los siguientes comandos.
+    - sudo apt update
+    - sudo apt upgrade
+    - sudo apt autoclean
+    - sudo apt autoremove
+10. Instalar nginx: sudo apt install nginx
+11. Instalar npm: sudo apt install npm
+12. En la raíz de nuestra maquina virtual, crear dos carpetas para nuestros proyectos
+    - mkdir back
+    - mkdir front
+13. En VSCode instalar la extensión SFTP (del autor Natizyskunk)
+    - Presionar la combinación de teclas Ctrl + Shift + P
+    - Escribir: sftp: config
+    - Esto nos crea el archivo sftp.json el cual contiene la configuración de la conexción ftp
+     Modificarlos siguientes valores
+    - host: IP externa,
+    - username: "nombre de usuario de la ssh",
+    - remotePath: "/home/usuario/back", // path de la carpeta donde se almacenara el proyecto en la VM
+    - privateKeyPath: "/home/usuario/.ssh/id_ecdsa", // windows - linux (sustituir usuario)
+    - privateKeyPath: "/User/usuario/.ssh/id_ecdsa", // MacOs (sustituir usuario)
+    // Agregar los siguientes archivos y carpetas a excluir
+    - ignore: [
+        ".vscode",
+        ".git",
+        ".DS_Store",
+        "node_modules"
+    ]
+    - Ir al explorador de archivos de VSCode y hasta el final dar click derecho en una zona libre de archivos
+    - Elegir la antepenúltima opción "Upload Folder" para que se carguen nuestros archivos a la VM.
