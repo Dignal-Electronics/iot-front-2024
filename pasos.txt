@@ -37,7 +37,7 @@
 13. En VSCode instalar la extensión SFTP (del autor Natizyskunk)
     - Presionar la combinación de teclas Ctrl + Shift + P
     - Escribir: sftp: config
-    - Esto nos crea el archivo sftp.json el cual contiene la configuración de la conexción ftp
+    - Esto nos crea el archivo sftp.json el cual contiene la configuración de la conexión ftp
      Modificarlos siguientes valores
     - host: IP externa,
     - username: "nombre de usuario de la ssh",
@@ -53,3 +53,144 @@
     ]
     - Ir al explorador de archivos de VSCode y hasta el final dar click derecho en una zona libre de archivos
     - Elegir la antepenúltima opción "Upload Folder" para que se carguen nuestros archivos a la VM.
+14. Copiar el contenido  del archivo sftp.json para configurar la conexión
+   con la VM, modificar los siguientes campos:
+   - remotePath: "/home/usuario/front"
+   - En el explorador, dar click derecho fuera de los archivos y Seleccionar la opción "UploadFolder".
+15. Instalar NVM para tener la versión LTS de node.
+    - En consola ejecutar el siguiente comando:
+       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+    - Al finalizar la instalación de nvm, podrémos ver en consola un mensaje que
+    nos indica que debemos copiar la última parte mostrada y ejecutar dentro de la misma consola
+    debe ser un mensaje como el siguiente:
+        export NVM_DIR="$([ -z "${XDG_CONFIG_HOME ...  .sh" # This loads nvm
+    - Esto nos agragara el path de nvm para poder usarlo
+16. Instalar node con nvm
+    - Ejecutar el comando "nvm install 20.16"
+17. Instalar las dependencias de ambos proyectos desde sus respactivas carpetas
+    - dentro de la carpeta back: npm install
+    - dentro de la carpeta front: npm install
+18. Instalar la librería PM2, para levantar el backend:
+    - Ejecutar el comando: npm install pm2 -g
+    - dentro de la carpeta del back ejecutar: "pm2 start index.js"
+    Con esto tendremos ejecutandose el backend
+19. Dentro de la carpeta del front generar el build de nuestro proyecto
+    con el comando:
+    - npm run build
+    Este comando nos creara una carpeta llamada dist que es la que contiene
+    nuestro proyecto de vue, convertido en archivos html, js y css
+20. Modificar el archivo default de nginx para que apunte a nuestra carpeta del front
+    - Salir a la carpeta raiz: cd ..
+    - sudo nano /etc/nginx/sites-available/default
+    con esta comando se abrirá en la consola un editor llamado nano, que nos permitirá
+    editar el contenido del archivo default, en este archivo debemos modificar las siguientes lineas:
+    - root /var/www/index.html => /home/miusuario/front/dist
+    - try_files $uri $uri/ =404; => try_files $uri $uri/ /index.html;
+    - Presionar ctrl + X
+    - Presionar la tecla Y
+    - Presionar enter
+    - Con esto guardaremos los cambios del archivo default
+    - Reiniciar el servicio de nginx: sudo service nginx restart
+21. Instalar el broker ejecutando los siguientes comandos
+    - curl -s https://assets.emqx.com/scripts/install-emqx-deb.sh | sudo bash
+    - sudo apt-get install emqx
+    - sudo emqx start
+22. Instalar mysql con los siguientes comandos:
+    - sudo apt install mysql-server
+    Modificar el archivos de configuraciónde mysql para Permitir la conexión:
+    - sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+        - bind-address = 127.0.0.1 => bind-address = 0.0.0.0
+        - Presionar ctrl + X -> Y -> Enter => para guardar los cambios
+    - reiniciar el servicio de mysql: sudo service mysql restart
+    - Cambiar la contraseña del usuario root
+        - alter user 'root'@'localhost' identified with mysql_native_password by 'micontraseña;
+        - flush privileges;
+    - Cambiar el hosta del usuario root
+        - update mysql.user set Host='%' where User = 'root';
+        - flush privileges;
+    Salir de mysql: exit
+23. Abrir los puertos dentro de las reglas del Firewall
+    - En Firewall -> Crear regla de firewall
+    - Destinos: Todas las instancias de red
+    - Rangos de IPv4 de origen: 0.0.0.0/0
+    - TPC: "Número del puerto":
+        - Agregar el puerto de mysql 3306 → mysql
+        - Agregar el puerto en el tcp: 1883 → mqtt
+        - Agregar el puerto en el tcp: 3000 → websocket
+        - Agregar el puerto en el tcp: 2213 → api
+24. Configurar el backend:
+    - En el archivo config.json modificar lo siguiente
+        "development": {
+            "username": "root",
+            "password": "jclandero21", // passwor que se colocó al usuario root
+            "database": "iot",
+            "host": "35.222.53.85", // mi ip externa
+            "dialect": "mysql",
+            "pool": {
+                "max": 5,
+                "min": 0,
+                "acquire": 30000,
+                "idle": 10000
+            },
+            "dialectOptions": {
+                "connectTimeout": 60000
+            }
+            },
+    - En el archivo .env modificar:
+        API_PORT=2213
+        URL_ORIGIN='http://35.222.53.85' // mi ip externa
+    - En el archivo index.js modificar la url del cliente mqtt que apunte a localhost:
+        - const mqttClient = mqtt.connect('http://mqtt'); => const mqttClient = mqtt.connect('http://localhost');
+    - Subir los archivos config.json y .env, dando click derecho sobre el archivos y
+        eligiendo la opción: "Upload File"
+    - salir de la carpeta back: cd ..
+25. En consola reiniciar el index.js con pm2: pm2 restart 0
+    - Revisar los logs de pm2 en los cuales veremos el mensaje de que estamos conectados
+    al puerto 2213 del api.
+
+26. En la carpeta del front modificamos:
+    - Charts.vue, para que apunte a la ip externa
+        const socket = io(`http://35.222.53.85:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
+            autoConnect: false
+        });
+    - el archivo .env:
+        VITE_API_PORT=2213
+        VITE_WEBSOCKET_PORT=2810
+    - Dar click derecho en cada uno de los archivos modificados y seleccionar la opción "Upload File" para cada uno.
+27. En consola se debe crear nuevamente el compilado del front:
+    - npm run build
+    Con este comando al dar click en iniciar sesion, debemos ver que la petición apunte a la ip externa
+    si no es asi, reiniciemos el servicio de nginx:
+        - sudo service nginx restart.
+    
+* Con estos pasos debemos ver en funcionamiento nuestra plataforma
+* En estas instrucciones se ha corregido el error que no  dejaba que funcionará el back.
+
+** Si solo necesitas corregir el error del backend ejecuta los siguiente:
+- El error se debe a que el puerto 88 debe estar ocupado por algún proceso de nuestra VM
+ por lo tanto el puerto del api lo cambiaremos al puerto 2213.
+
+1. En el backend cambiar en puerto del api en el archivo .env
+    - VITE_API_PORT=2213
+2. En el archivo index.js modificar la url del mqttClient
+    - const mqttClient = mqtt.connect('http://localhost');
+3. Subir ambos archivos.
+4. En el front modificar el archivo .env
+    - VITE_API_PORT=2213
+5. Subir el archivo .env del front
+6. Crear la regla en el firewall para el puerto 2213
+    - En Firewall -> Crear regla de firewall
+    - Destinos: Todas las instancias de red
+    - Rangos de IPv4 de origen: 0.0.0.0/0
+    - tcp: 2213
+7.- En consola en la carpeta del front, crear nuevamente el compilado de nuestro proyecto vue:
+    - npm run build
+    Actualizar nginx
+    - sudo service nginx restart
+8.- En consola en la carpeta del back, reiniciar el servicio del index.js
+    - pm2 restart 0
+    Revisar que en los logs, no tengamos errores y que en su lugar se vean los mensajes
+    - 0|index    | Puerto API 2213
+    - 0|index    | Conectado a mqtt
+10. Con esto podemos probar el iniciarsesión desde nuestro front e intentar probar 
+ todas las funcionalidades que hemos definido en nuestro proyecto.
