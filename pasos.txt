@@ -171,7 +171,7 @@
  por lo tanto el puerto del api lo cambiaremos al puerto 2213.
 
 1. En el backend cambiar en puerto del api en el archivo .env
-    - VITE_API_PORT=2213
+    - API_PORT=2213
 2. En el archivo index.js modificar la url del mqttClient
     - const mqttClient = mqtt.connect('http://localhost');
 3. Subir ambos archivos.

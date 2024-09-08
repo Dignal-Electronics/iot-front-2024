@@ -25,8 +25,8 @@
                 @click="changeStatus(item)"></v-btn>
               <v-btn v-else color="green" class="mr-1" icon="mdi-check" density="comfortable"
                 @click="changeStatus(item)"></v-btn>
-              <v-btn v-if="item.active" class="mr-1" :to="`/dispositivos/${item.key}`" icon="mdi-monitor-eye"
-                density="comfortable" color="blue" target="_blank"></v-btn>
+              <v-btn v-if="item.active" class="mr-1" icon="mdi-monitor-eye"
+                density="comfortable" color="blue" @click="showDashboardDialog(item.key)"></v-btn>
             </template>
           </v-data-table>
         </v-card-text>
@@ -37,6 +37,36 @@
     @click="openNewDeviceModal()"></v-btn>
   <New :openModal="newDeviceModal" @close-modal="closeNewDeviceModal"></New>
   <Edit :openModal="editDeviceModal" @close-modal="closeEditDeviceModal" :device="device" />
+
+  <v-dialog v-model="dashboardDialog" width="600">
+    <v-card title="Selecciona un dashboard">
+      <v-card-text>
+        <v-row>
+          <v-col cols="12">
+            <v-select
+              v-model="dashboardSelected"
+              :items="[
+                { title: 'PIC-IoT', value: 'pic-iot'},
+                { title: 'ESP32 BME280', value: 'esp23'},
+                { title: 'Vista 3', value: 'v3'},
+                { title: 'Vista 4', value: 'v4'},
+                { title: 'Vista 5', value: 'v5'},
+                { title: 'Vista 6', value: 'v6'},
+              ]"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" class="text-center">
+            <v-btn
+              :to="`/dispositivos/${key}/${dashboardSelected}`"
+              target="_blank"
+              :disabled="dashboardSelected === null"
+              @click="dashboardDialog = false"
+            >Abrir</v-btn>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -46,6 +76,14 @@ import { useApiStore } from '@/stores/api';
 import New from '@/views/Devices/New.vue';
 import Edit from '@/views/Devices/Edit.vue';
 import { useLoaderStore } from '@/stores/loader';
+
+const dashboardDialog = ref(false);
+const dashboardSelected = ref(null);
+const key = ref(null);
+const showDashboardDialog = (deviceKey) => {
+  key.value = deviceKey;
+  dashboardDialog.value = true;
+}
 
 const headers = ref([
   { title: 'ID', key: 'id' },

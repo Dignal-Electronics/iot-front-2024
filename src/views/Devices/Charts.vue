@@ -2,7 +2,7 @@
   <v-row>
     <!-- Columna 1 -->
     <v-col cols="12" md="6">
-      <v-card color="indigo-darken-3" variant="tonal" height="400px">
+      <v-card color="grey-darken-2" variant="tonal" height="400px">
         <v-card-title class="text-red">Gráfico 1</v-card-title>
         <div class="h-chart" ref="zoomableChart"></div>
       </v-card>
@@ -13,7 +13,7 @@
       <v-row>
         <!-- Led -->
         <v-col cols="6">
-          <v-card color="indigo-darken-3" variant="tonal" height="180px">
+          <v-card color="grey-darken-2" variant="tonal" height="180px">
             <v-card-title class="text-center">Led</v-card-title>
             <v-card-text class="h-100 text-center">
               <!-- v-row>v-col>v-btn -> me genera las etiquetas de ambos elementos. -->
@@ -33,7 +33,7 @@
 
         <!-- Ventilador -->
         <v-col cols="6">
-          <v-card color="indigo-darken-3" variant="tonal" height="180px">
+          <v-card color="grey-darken-2" variant="tonal" height="180px">
             <v-card-title class="text-center">Ventilador</v-card-title>
             <v-card-text class="h-100 text-center">
               <!-- v-row>v-col>v-btn -> me genera las etiquetas de ambos elementos. -->
@@ -54,7 +54,7 @@
 
         <!-- Slider luminosidad -->
         <v-col cols="12">
-          <v-card title="Luminosidad" color="indigo-darken-3" variant="tonal" height="195px">
+          <v-card title="Luminosidad" color="grey-darken-2" variant="tonal" height="195px">
             <v-card-text>
               <v-row class="mt-3">
                 <v-col class="text-center">
@@ -86,26 +86,26 @@
 
     <!-- Sección derecha -->
     <v-col cols="12" md="3">
-      <v-card title="Gráfico 2" color="indigo-darken-3" variant="tonal" height="400px">
+      <v-card title="Gráfico 2" color="grey-darken-2" variant="tonal" height="400px">
         <div class="h-chart" ref="customPictorialChart"></div>
       </v-card>
     </v-col>
 
     <v-col cols="12" md="4">
-      <v-card title="Temperatura" color="indigo-darken-3" variant="tonal" height="400px">
+      <v-card title="Temperatura" color="grey-darken-2" variant="tonal" height="400px">
         <div class="h-chart" ref="gauge"></div>
       </v-card>
     </v-col>
 
     <v-col cols="12" md="4">
-      <v-card title="Luminosidad" color="indigo-darken-3" variant="tonal" height="400px">
+      <v-card title="Luminosidad" color="grey-darken-2" variant="tonal" height="400px">
         <div class="h-chart" ref="gauge2"></div>
       </v-card>
     </v-col>
 
     <!-- Columna 2 -->
     <v-col  cols="12" md="4">
-      <v-card title="Gráfico 2" color="indigo-darken-3" variant="tonal" height="400px">
+      <v-card title="Gráfico 2" color="grey-darken-2" variant="tonal" height="400px">
         <div class="h-chart" ref="customChart"></div>
       </v-card>
     </v-col>
@@ -192,7 +192,8 @@ onMounted(() => {
   });
 });
 
-const socket = io(`http://localhost:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
+const socket = io(`http://35.222.53.85:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
+// const socket = io(`http://localhost:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
   autoConnect: false
 });
 

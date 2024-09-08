@@ -5,6 +5,8 @@ import Main from '@/components/layout/Main.vue'
 import Users from '@/views/Users/Index.vue'
 import Devices from '@/views/Devices/Index.vue'
 import Charts from '@/views/Devices/Charts.vue'
+import Dashboard2 from '@/views/Devices/Dashboard2.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,7 +35,8 @@ const router = createRouter({
       children: [
         { path: '/usuarios', name: 'users', component: Users },
         { path: '/dispositivos', name: 'devices', component: Devices },
-        { path: '/dispositivos/:key', name: 'charts', component: Charts }
+        { path: '/dispositivos/:key/pic-iot', name: 'charts', component: Charts },
+        { path: '/dispositivos/:key/esp23', name: 'dashboard', component: Dashboard2 }
       ]
     },
 
