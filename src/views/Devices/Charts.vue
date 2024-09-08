@@ -192,8 +192,7 @@ onMounted(() => {
   });
 });
 
-const socket = io(`http://35.222.53.85:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
-// const socket = io(`http://localhost:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
+const socket = io(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
   autoConnect: false
 });
 
