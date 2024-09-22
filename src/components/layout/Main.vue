@@ -32,13 +32,21 @@
     <v-spacer></v-spacer>
 
     <template v-slot:append>
-
-      <v-btn
-        v-if="route.params.key"
-        class="ms-5"
-        icon="mdi-bell-badge"
-        @click="openNotificationDialog()"
-      ></v-btn>
+      <!-- primary, secondary, accent -->
+      <!-- success: verde, error: rojo, warning: amarillo, info: azul -->
+      <v-badge
+        color="purple"
+        :content="newNotifications"
+        offset-y="10"
+        offset-x="10"
+      >
+        <v-btn
+          v-if="route.params.key"
+          class="ms-5"
+          icon="mdi-bell"
+          @click="openNotificationDialog()"
+        ></v-btn>
+      </v-badge>
 
       <v-menu>
         <template v-slot:activator="{ props }">
@@ -64,7 +72,7 @@
   </v-main>
 
   <v-dialog v-model="showNotificationsDialog" width="70%" v-if="route.params.key">
-    <v-card title="Notificaciones" height="500">
+    <v-card title="Notificaciones" height="650" class="overflow-y-hidden">
       <v-card-text class="overflow-x-auto">
         <v-row>
           <v-col class="px-10">
@@ -82,7 +90,7 @@
               <span
                 :class="colorMode == 'darkMode' ? 'text-white' : 'text-grey-darken-3'"
                 class="font-weight-medium"
-              >Generado: {{ text.date }}</span>
+              >Generado: {{ new Date(text.date).toLocaleTimeString() }} - {{ new Date(text.date).toLocaleDateString() }}</span>
               <p>{{  text.text  }}</p>
             </v-alert>
           </v-col>
@@ -92,7 +100,7 @@
       <v-card-actions>
         <v-row>
           <v-col class="text-center">
-            <v-btn class="ma-3" @click="showNotificationsDialog = false">Cerrar</v-btn>
+            <v-btn class="my-3" @click="showNotificationsDialog = false">Cerrar</v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
@@ -133,8 +141,12 @@ onMounted(() => {
   }
 
   socket.on('openaiResponse', (data) => {
+    newNotifications.value++;
+    // newNotifications.value = newNotifications.value + 1;
+    // newNotifications.value += 1;
+
     openaiResponse.value.unshift(data);
-    showSnackbar = true;
+    showSnackbar.value = true;
   });
 })
 
@@ -146,8 +158,10 @@ const showNotificationsDialog = ref(false)
 const openaiResponse = ref([]);
 const openNotificationDialog = () => {
   showNotificationsDialog.value = true;
+  newNotifications.value = 0;
 }
-const showSnackbar = ref(false)
+const showSnackbar = ref(false);
+const newNotifications = ref(0);
 
 const user = ref(null)
 const colorMode = ref('lightMode')
