@@ -35,13 +35,13 @@
       <!-- primary, secondary, accent -->
       <!-- success: verde, error: rojo, warning: amarillo, info: azul -->
       <v-badge
+        v-if="route.params.key"
         color="purple"
         :content="newNotifications"
         offset-y="10"
         offset-x="10"
       >
         <v-btn
-          v-if="route.params.key"
           class="ms-5"
           icon="mdi-bell"
           @click="openNotificationDialog()"
@@ -91,7 +91,7 @@
                 :class="colorMode == 'darkMode' ? 'text-white' : 'text-grey-darken-3'"
                 class="font-weight-medium"
               >Generado: {{ new Date(text.date).toLocaleTimeString() }} - {{ new Date(text.date).toLocaleDateString() }}</span>
-              <p>{{  text.text  }}</p>
+              <p v-html="text.text"></p>
             </v-alert>
           </v-col>
         </v-row>
@@ -120,6 +120,7 @@ import { ref, onMounted, onBeforeMount } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
 import { useRoute } from 'vue-router';
 import { io } from 'socket.io-client';
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
 const drawer = ref(true);
 const settingsStore = useSettingsStore();
@@ -137,18 +138,20 @@ onMounted(() => {
   if (route.params.key) {
     console.log('dispositivo - openai: ', route.params.key);
     
-    socket.emit('openai');
+    socket.emit('openai', route.params.key);
   }
 
-  socket.on('openaiResponse', (data) => {
+  socket.on('openaiResponse', ({date, text}) => {
+    console.log(`openAI: ${text}`);
+    
     newNotifications.value++;
     // newNotifications.value = newNotifications.value + 1;
     // newNotifications.value += 1;
 
-    openaiResponse.value.unshift(data);
+    openaiResponse.value.unshift({date: date, text: marked.parse(text)});
     showSnackbar.value = true;
   });
-})
+});
 
 const socket = io(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_WEBSOCKET_PORT}`, {
   autoConnect: false
@@ -159,6 +162,11 @@ const openaiResponse = ref([]);
 const openNotificationDialog = () => {
   showNotificationsDialog.value = true;
   newNotifications.value = 0;
+    
+  // En caso de desear que las peticiones se realicen cuando se abre el modal
+  // se debe agregar en este punto el envio de datos al socket de openai
+  // y comentar el if dentro del mounted 
+  // socket.emit('openai', route.params.key);
 }
 const showSnackbar = ref(false);
 const newNotifications = ref(0);
