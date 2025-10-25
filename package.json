@@ -1,6 +1,6 @@
 {
-  "name": "iot-frontend-students",
-  "version": "1.0.0",
+  "name": "dignal-iot-frontend",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {

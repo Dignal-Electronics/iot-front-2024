@@ -6,10 +6,4 @@ services:
      - "8080:8080"
     volumes:
       - ./../:/usr/app
-    networks:
-      - iot-network
     command: npm run dev
-
-networks:
-  iot-network:
-    driver: bridge

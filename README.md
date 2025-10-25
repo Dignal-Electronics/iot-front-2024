@@ -13,18 +13,18 @@ Este repositorio contiene el frontend de nuestra plataforma iot, diseñada con v
 - Para iniciar debes clonar este repositorio en tu equipo por medio del siguiente comando de git:
 - Si eres usuario windows debes clonar esta carpeta dentro de la raíz del WSL.
 
-```
-git clone git@github.com:Dignal-Electronics/iot-front-2024.git
+```bash
+git clone git@github.com:Dignal-Electronics/web-iot-frontend.git
 ```
 
 - El proyecto debe ser levantado usando docker, para ello primero debemos de instalar las dependencias usando el comando `npm install`:
 
-```
-docker compose -f .docker/compose.yaml run node npm install
+```bash
+docker compose -f .docker/compose.yaml run --rm node npm install
 ```
 
 - Después de instalar las dependencias debemos levantar el contendor, el cual ya ejecutará de manera interna el comando `npm run dev`:
 
-```
+```bash
 docker compose -f .docker/compose.yaml up -d
 ```
